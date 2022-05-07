@@ -12,7 +12,11 @@ class Client {
     private $tokenPath = '../token.json';
     
     public function __construct(){
-        $credential = $_ENV["sheet_credential"];
+        $credentialContent = $_ENV["sheet_credential"];
+        $credential = json_decode($credential, true);
+        var_dump($credential);
+        var_dump($_ENV);
+
         $this->client = new Google_Client();
         $this->client->setScopes(
             Google_Service_Sheets::DRIVE,
@@ -24,7 +28,7 @@ class Client {
         $this->client->setApplicationName('Finance App');
         $this->client->setAccessType('offline');
         $this->client->setPrompt('select_account consent');
-        $this->client->setAuthConfig(json_decode($credential));
+        $this->client->setAuthConfig($credential);
 
         $currentToken = $this->loadToken();
         if($currentToken){
