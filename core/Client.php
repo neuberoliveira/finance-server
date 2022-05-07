@@ -13,7 +13,7 @@ class Client {
     
     public function __construct(){
         $credentialContent = $_ENV["sheet_credential"];
-        $credential = json_decode($credential, true);
+        $credential = json_decode($credentialContent, true);
         var_dump($credential);
         var_dump($_ENV);
 
