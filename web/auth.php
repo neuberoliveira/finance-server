@@ -9,6 +9,9 @@ if($_SERVER['QUERY_STRING']){
   $client = new Client();
   
   $client->authWithCode($code);
+  echo "Authenticated";
+}else{
+  echo "No query string available";
 }
 
 
