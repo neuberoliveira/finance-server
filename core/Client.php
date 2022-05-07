@@ -14,9 +14,7 @@ class Client {
     public function __construct(){
         $credentialContent = $_ENV["sheet_credential"];
         $credential = json_decode($credentialContent, true);
-        var_dump($credential);
-        var_dump($_ENV);
-
+        
         $this->client = new Google_Client();
         $this->client->setScopes(
             Google_Service_Sheets::DRIVE,
@@ -71,7 +69,7 @@ class Client {
     
     public function authWithCode($authCode){
         // Exchange authorization code for an access token.
-        $accessToken = $this->client->fetchAccessTokenWithAuthCode("4/0AX4XfWjo1qrkYK-X7vy-EwoU0egGNSUhACooLem52M8-7EGIOBnonkeCOLp7WNSrbjUNhg&scope=https://www.googleapis.com/auth/drive");
+        $accessToken = $this->client->fetchAccessTokenWithAuthCode($authCode);
         
         // Check to see if there was an error.
         if (array_key_exists('error', $accessToken)) {
