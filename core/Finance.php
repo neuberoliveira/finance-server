@@ -50,10 +50,10 @@ class Finance {
     $requestBody->values = [$params];
     $response = $this->service->spreadsheets_values->append($this->spreadsheetId, $range, $requestBody, $options);
     // print_r($response);
-    var_dump($response->updates->updatedRange);
+    /* var_dump($response->updates->updatedRange);
     var_dump($response->updates->updatedCells);
     var_dump($response->updates->updatedColumns);
     var_dump($response->updates->updatedRows);
-    var_dump($response->updates->updatedData->values);
+    var_dump($response->updates->updatedData->values); */
   }
 }

@@ -1,18 +1,31 @@
 <?php
 include_once('../core/Client.php');
-include_once('../core/Finance.php');
+include_once('../core/Response.php');
 
 use Finance\Client;
+use Finance\Response;
 
-if($_SERVER['QUERY_STRING']){
+$response = new Response();
+
+if(isset($_GET['code']) && isset($_GET['scope'])){
   $code = substr($_SERVER['QUERY_STRING'], 5);
   $client = new Client();
   
-  $client->authWithCode($code);
-  echo "Authenticated";
+  try {
+    $client->authWithCode($code);
+    $response->add("auth", "authenticated");
+  }catch(Exception $ex){
+    $response->add("auth", "fail");
+    $response->add("error", "Invalid authentication code");
+    $response->add("detail", $ex->getMessage());
+    $response->status(400);
+  }
 }else{
-  echo "No query string available";
+  $response->add("auth", "fail");
+  $response->add("error", "Authentication code not found");
+  $response->status(400);
 }
+$response->sendJson();
 
 
 

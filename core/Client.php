@@ -12,8 +12,7 @@ class Client {
     private $tokenPath = '../token.json';
     
     public function __construct(){
-        $credentialContent = $_ENV["sheet_credential"];
-        $credential = json_decode($credentialContent, true);
+        $credentials = $this->getCredentials();
         
         $this->client = new Google_Client();
         $this->client->setScopes(
@@ -26,13 +25,36 @@ class Client {
         $this->client->setApplicationName('Finance App');
         $this->client->setAccessType('offline');
         $this->client->setPrompt('select_account consent');
-        $this->client->setAuthConfig($credential);
+        $this->client->setAuthConfig($credentials);
+        $this->client->setRedirectUri($this->getURLMatchServer($credentials));
+    }
 
-        $currentToken = $this->loadToken();
-        if($currentToken){
-            $this->client->setAccessToken($currentToken);
+    private function getURLMatchServer($config){
+        $parsed;
+        $currentHost = $_SERVER["SERVER_NAME"];
+        $uris = $config["web"]["redirect_uris"];
+        
+        foreach($uris as $uri){
+            $parsed = parse_url($uri);
+            if($parsed["host"]==$currentHost){
+                return $uri;
+            }
+        }
+    }
+
+    private function getCredentials(){
+        $configFile = "../credentials.json";
+        $credentialContent;
+        if(isset($_ENV["sheet_credential"])){
+            $credentialContent = $_ENV["sheet_credential"];
+        }else if(file_exists($configFile)){
+            $credentialContent = file_get_contents($configFile);
+        }else {
+            throw new Exception("No Credentials available, either in file or in env");
         }
 
+        $credentials = json_decode($credentialContent, true);
+        return $credentials;
     }
 
     private function loadToken(){
@@ -58,13 +80,23 @@ class Client {
     }
 
     public function auth(){
+        $loadedToken = $this->loadToken();
+        if(!$loadedToken){
+            return null;
+        }
+
+        
+        $this->client->setAccessToken($loadedToken);
         // If there is no previous token or it's expired.
         if ($this->client->isAccessTokenExpired()) {
             // Refresh the token if possible, else fetch a new one.
             if ($this->client->getRefreshToken()) {
                 $this->client->fetchAccessTokenWithRefreshToken($this->client->getRefreshToken());
+                
+                $this->saveToken($this->client->getAccessToken());
             }
         }
+        $this->isConnected = true;
     }
     
     public function authWithCode($authCode){
