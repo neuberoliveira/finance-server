@@ -27,9 +27,6 @@ class Client {
         $this->client->setPrompt('select_account consent');
         $this->client->setAuthConfig($credentials);
         $this->client->setRedirectUri($this->getURLMatchServer($credentials));
-        
-        var_dump($_SERVER["SERVER_NAME"]);
-        exit();
     }
 
     private function getURLMatchServer($config){
@@ -43,6 +40,8 @@ class Client {
                 return $uri;
             }
         }
+
+        throw new Exception("Server $currentHost not match any uri");
     }
 
     private function getCredentials(){
