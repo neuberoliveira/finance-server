@@ -1,8 +1,9 @@
 <?php
 namespace Finance;
-use DateTime;
 use Google_Service_Sheets;
 use Google_Service_Sheets_ValueRange;
+use DateTime;
+use stdClass;
 
 class Finance {
   private $client;
@@ -49,11 +50,14 @@ class Finance {
     
     $requestBody->values = [$params];
     $response = $this->service->spreadsheets_values->append($this->spreadsheetId, $range, $requestBody, $options);
-    // print_r($response);
-    /* var_dump($response->updates->updatedRange);
-    var_dump($response->updates->updatedCells);
-    var_dump($response->updates->updatedColumns);
-    var_dump($response->updates->updatedRows);
-    var_dump($response->updates->updatedData->values); */
+    $result = new stdClass();
+
+    $result->range = $response->updates->updatedRange;
+    $result->cells = $response->updates->updatedCells;
+    $result->columns = $response->updates->updatedColumns;
+    $result->rows = $response->updates->updatedRows;
+    $result->values = $response->updates->updatedData->values;
+
+    return $result;
   }
 }

@@ -13,6 +13,10 @@ class Response {
     $this->output->$key = $value;
   }
 
+  public function replace($output){
+    $this->output = $output;
+  }
+
   public function setResponseHeader($type){
     header("Content-Type: ".$type);
   }

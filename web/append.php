@@ -11,14 +11,24 @@ $response = new Response();
 $client = new Client();
 $client->auth();
 
-if($client->isConnected){
-  $amount = $_REQUEST['amount'];
-  $description = $_REQUEST['description'];
-
-  $finance = new Finance($client->client);
-  $finance->append($amount, $description);
-}else{
+if(!$client->isConnected){
   $response->add("auth_url", $client->getAuthURL());
   $response->status(401)->sendJson();
 }
+
+
+$amount = $_REQUEST['amount'];
+$description = $_REQUEST['description'];
+
+if(!$amount){
+  $response->status(400);
+  $response->add("error", "Missing amount or description");
+}else{
+  $finance = new Finance($client->client);
+  $result = $finance->append($amount, $description);
+  
+  $response->replace($result);
+}
+
+$response->sendJson();
 
