@@ -27,13 +27,16 @@ class Client {
         $this->client->setPrompt('select_account consent');
         $this->client->setAuthConfig($credentials);
         $this->client->setRedirectUri($this->getURLMatchServer($credentials));
+        
+        var_dump($_SERVER["SERVER_NAME"]);
+        exit();
     }
 
     private function getURLMatchServer($config){
         $parsed;
         $currentHost = $_SERVER["SERVER_NAME"];
         $uris = $config["web"]["redirect_uris"];
-        
+
         foreach($uris as $uri){
             $parsed = parse_url($uri);
             if($parsed["host"]==$currentHost){
