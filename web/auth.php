@@ -1,6 +1,6 @@
 <?php
-include_once('../core/Client.php');
-include_once('../core/Response.php');
+require __DIR__ . '/../vendor/autoload.php';
+
 
 use Finance\Client;
 use Finance\Response;
@@ -14,16 +14,15 @@ if(isset($_GET['code']) && isset($_GET['scope'])){
   try {
     $client->authWithCode($code);
     $response->add("auth", "authenticated");
-    $response->add("token", json_encode($client->getAccessToken()));
   }catch(Exception $ex){
+    $response->setErrors("Invalid authentication code");
     $response->add("auth", "fail");
-    $response->add("error", "Invalid authentication code");
     $response->add("detail", $ex->getMessage());
     $response->status(400);
   }
 }else{
+  $response->setErrors("Authentication code not found");
   $response->add("auth", "fail");
-  $response->add("error", "Authentication code not found");
   $response->status(400);
 }
 $response->sendJson();

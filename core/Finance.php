@@ -40,6 +40,22 @@ class Finance {
     return $type=="credit";
   }
 
+
+  public function appendValidate($type, $amount, $desc){
+    $isAmountValid = $amount && is_numeric($amount);
+    $isTypeValid = ($type=="debit" || $type=="credit");
+    $errors = [];
+
+    if(!$isAmountValid){
+      $errors[] = "Amount is required to be numeric";
+    }
+    if(!$isTypeValid){
+      $errors[] = "Type is required and must be 'debit' or 'credit'";
+    }
+
+    return $errors ? $errors : null;
+  }
+  
   public function append($type, $amount, $description){
     $date = new DateTime();
     $requestBody = new Google_Service_Sheets_ValueRange();

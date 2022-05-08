@@ -1,7 +1,5 @@
 <?php
-include_once('../core/Client.php');
-include_once('../core/Finance.php');
-include_once('../core/Response.php');
+require __DIR__ . '/../vendor/autoload.php';
 
 date_default_timezone_set('America/Sao_Paulo');
 
@@ -11,6 +9,8 @@ use Finance\Response;
 
 $response = new Response();
 $client = new Client();
+$finance = new Finance($client->client);
+
 $client->auth();
 
 if(!$client->isConnected){
@@ -19,25 +19,15 @@ if(!$client->isConnected){
   exit();
 }
 
-
 $amount = $_REQUEST['amount'];
 $type = $_REQUEST['type'];
 $description = $_REQUEST['description'];
 
-$isAmountValid = $amount && is_numeric($amount);
-$isTypeValid = ($type=="debit" || $type=="credit");
-
-if( !$isAmountValid || !$isTypeValid){
-  $response->status(400);
-  if(!$isAmountValid){
-    $response->add("error", "Amount is required to be numeric");
-  }else if(!$isTypeValid){
-    $response->add("error", "Type is required and must be 'debit' or 'credit'");
-  }
+$validateErrors = $finance->appendValidate($type, $amount, $description);
+if($validateErrors){
+  $response->status(400)->setError($validateErrors);
 }else{
-  $finance = new Finance($client->client);
   $result = $finance->append($type, $amount, $description);
-  
   $response->replace($result);
 }
 

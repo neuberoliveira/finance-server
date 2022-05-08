@@ -17,6 +17,18 @@ class Response {
     $this->output = $output;
   }
 
+  public function setErrors($err){
+    $this->output->errors = [];
+    $this->output->errors[] = $err;
+  }
+
+  public function addError($err){
+    if(!$this->output->errors){
+      $this->output->errors = [];
+    }
+    $this->output->errors[] = $err;
+  }
+
   public function setResponseHeader($type){
     header("Content-Type: ".$type);
   }
