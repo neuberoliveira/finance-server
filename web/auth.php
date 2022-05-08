@@ -14,6 +14,7 @@ if(isset($_GET['code']) && isset($_GET['scope'])){
   try {
     $client->authWithCode($code);
     $response->add("auth", "authenticated");
+    $response->add("token", json_encode($client->getAccessToken()));
   }catch(Exception $ex){
     $response->add("auth", "fail");
     $response->add("error", "Invalid authentication code");

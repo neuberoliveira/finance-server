@@ -60,17 +60,17 @@ class Client {
     }
 
     private function loadToken(){
-        // Load previously authorized token from a file, if it exists.
-        // The file token.json stores the user's access and refresh tokens, and is
-        // created automatically when the authorization flow completes for the first
-        // time.
+        $tokenStr;
+        if(isset($_GET["token"])){
+            $tokenStr = stripslashes($_GET["token"]);
+        }else if (file_exists($this->tokenPath)) {
+            $tokenStr = file_get_contents($this->tokenPath);
+        }
         
-        if (file_exists($this->tokenPath)) {
-            $accessToken = json_decode(file_get_contents($this->tokenPath), true);
+        if($tokenStr){
+            $accessToken = json_decode($tokenStr, true);
             return $accessToken;
         }
-
-        return null;
     }
     
     private function saveToken($token){
@@ -113,6 +113,10 @@ class Client {
         $this->client->setAccessToken($accessToken);
         $this->saveToken($accessToken);
         $this->isConnected = true;
+    }
+
+    public function getAccessToken(){
+        return $this->client->getAccessToken();
     }
 
     public function getAuthURL(){
