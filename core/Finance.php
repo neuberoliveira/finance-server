@@ -32,26 +32,40 @@ class Finance {
     return $nextEmptyLine;
   }
 
-  public function append($amount, $description){
+  public function isTypeDebit($type){
+    return $type=="debit";
+  }
+
+  public function isTypeCredit($type){
+    return $type=="credit";
+  }
+
+  public function append($type, $amount, $description){
     $date = new DateTime();
-    $range = 'Gastos!A3:A';
     $requestBody = new Google_Service_Sheets_ValueRange();
+    $range;
+
+    $params = [
+      $date->format('d/m/Y'),
+    ];
+
+    if($this->isTypeDebit($type)){
+      $range = 'Gastos!A3:A';
+      array_push($params, $amount, $description);
+    }else if($this->isTypeCredit($type)){
+      $range = 'Gastos!F3:F';
+      array_push($params, "", $amount, $description);
+    }
 
     $options = [
       "valueInputOption"=>"USER_ENTERED", 
       "includeValuesInResponse"=>true
     ];
-
-    $params = [
-      $date->format('d/m/Y'),
-      $amount,
-      $description,
-    ];
     
     $requestBody->values = [$params];
     $response = $this->service->spreadsheets_values->append($this->spreadsheetId, $range, $requestBody, $options);
+    
     $result = new stdClass();
-
     $result->range = $response->updates->updatedRange;
     $result->cells = $response->updates->updatedCells;
     $result->columns = $response->updates->updatedColumns;
