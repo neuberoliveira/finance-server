@@ -25,7 +25,7 @@ $description = $_REQUEST['description'];
 
 $validateErrors = $finance->appendValidate($type, $amount, $description);
 if($validateErrors){
-  $response->status(400)->setError($validateErrors);
+  $response->status(400)->setErrors($validateErrors);
 }else{
   $result = $finance->append($type, $amount, $description);
   $response->replace($result);
