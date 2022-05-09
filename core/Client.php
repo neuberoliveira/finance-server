@@ -60,15 +60,16 @@ class Client {
     }
 
     public function loadToken(){
+        $tokenStr;
         $accessToken;
         if(isset($_GET["token"])){
-            $accessToken = $_GET["token"];
+            $tokenStr = $_GET["token"];
         }else if (file_exists($this->tokenPath)) {
             $tokenStr = file_get_contents($this->tokenPath);
-            $accessToken = json_decode($tokenStr, true);
         }
-
-        if($accessToken){
+        
+        if($tokenStr){
+            $accessToken = json_decode($tokenStr, true);
             return $accessToken;
         }
     }

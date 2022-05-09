@@ -18,7 +18,7 @@ if(!$client->isConnected){
   exit();
 }
 $token = $client->getAccessToken();
-$response->add("token", $token["access_token"]);
+$response->replace($token);
 $response->sendJson();
 
 

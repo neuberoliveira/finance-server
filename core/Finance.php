@@ -42,7 +42,7 @@ class Finance {
 
 
   public function appendValidate($type, $amount, $desc){
-    $isAmountValid = $amount && preg_match("/\d+(,\d+)?/", $amount)===1;
+    $isAmountValid = $amount && preg_match("/\d+(\.\d+)?(,\d+)?/", $amount)===1;
     $isTypeValid = ($type=="debit" || $type=="credit");
     $errors = [];
 
@@ -60,11 +60,11 @@ class Finance {
     $date = new DateTime();
     $requestBody = new Google_Service_Sheets_ValueRange();
     $range;
-
+    // $amount = str_replace(".", "", $amount)
     $params = [
       $date->format('d/m/Y'),
     ];
-
+    
     if($this->isTypeDebit($type)){
       $range = 'Gastos!A3:A';
       array_push($params, $amount, $description);
