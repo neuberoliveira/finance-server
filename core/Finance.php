@@ -42,7 +42,7 @@ class Finance {
 
 
   public function appendValidate($type, $amount, $desc){
-    $isAmountValid = $amount && is_numeric($amount);
+    $isAmountValid = $amount && preg_match("/\d+(,\d+)?/", $amount)===1;
     $isTypeValid = ($type=="debit" || $type=="credit");
     $errors = [];
 
