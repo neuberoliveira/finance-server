@@ -63,7 +63,7 @@ class Client {
         $tokenStr;
         $accessToken;
         if(isset($_GET["token"])){
-            $tokenStr = $_GET["token"];
+            $tokenStr = stripslashes($_GET["token"]);
         }else if (file_exists($this->tokenPath)) {
             $tokenStr = file_get_contents($this->tokenPath);
         }
